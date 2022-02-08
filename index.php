@@ -84,6 +84,8 @@ try {
         $sql5 = "SELECT * FROM database.fb WHERE database.fb.Date NOT LIKE '%2019%'";
         $sql6 = "SELECT * FROM database.intc WHERE database.intc.Date NOT LIKE '%2019%'";
         $result4 =  $pdo->query($sql4);
+		$result5 =  $pdo->query($sql5);
+        $result6 =  $pdo->query($sql6);
         if($result4->rowCount() >0) {
 			//$aapl_date2 = array();
 			$aapl_open2 = array();			
@@ -141,7 +143,7 @@ try {
               <tr>
                 <td>Stock Name</td>
                 <td>Symbol</td>
-                <td>Price</td>
+                <td>Price ($)</td>
                 <td>Shares You Own</td>
                 <td>Buy</td>
                 <td>Sell</td>
@@ -184,12 +186,58 @@ try {
    </div>
     <div>
         <div>
-         <br> 
-        <textarea id="algorithm" rows="10" cols="72" placeholder="Decide down your own trading algorithm">
+         <br>
+		 <textarea id="algorithm" rows="10" cols="72" placeholder="Decide down your own trading algorithm">
         </textarea>
+		<br>
+		 <div style="float: left; margin-left: 0px;border: 1px solid black; background-color: white">  
+        <form id="algorithm" style="float: left; margin: 10px;" >
+		<span>Spend</span>
+		&nbsp;
+		<input type="number" max="100" min="0" style="width: 40px" id="percentofcashflow"></input>
+		<span>% of cash flow to buy </span>
+	    <select id="stock1">
+        <option value="aapl">AAPL</option>
+        <option value="fb">FB</option>
+		<option value="intc">INTC</option>
+       </select>
+	   <span> if </span>
+	   <select id="condition1"  onchange="fieldForPeriod()">
+        <option value="price">price</option>
+        <option value="ma" >MA</option>
+       </select>
+	   <p id="period1"> (Period = <input type="number" min="0" id="period of ma"></input> days)</p>
+	   <select id="operator1">
+        <option value=">">></option>
+        <option value=">=">>=</option>
+		<option value="<"><</option>
+        <option value="<="><=</option>
+       </select>
+	   <span>$</span>
+	   <input type="text" style="width: 40px" id="price1"></input>
+	   <br>
+	   <span>Sell it if </span>
+	   <select id="condition2"  onchange="fieldForPeriod()">
+        <option value="price">price</option>
+        <option value="ma" >MA</option>
+       </select>
+	   <p id="period1"> (Period = <input type="number" min="0" id="period of ma2"></input> days)</p>
+	   <select id="operator2">
+        <option value=">">></option>
+        <option value=">=">>=</option>
+		<option value="<"><</option>
+        <option value="<="><=</option>
+       </select>
+	   <span>$</span>
+	   <input type="text" style="width: 40px" id="price2"></input>  	    
+       </form>
+</div>
         <br>
+		<br>
+		<br>
+		<br>
 		<div style="display: flex; justify-content: center; align-items: center;">
-        <button >Execute Your Trading Algorithm</button>
+        <button id="execute" onclick="">Execute Your Trading Algorithm</button>
 	    </div> 
       </div>    
   </div>
@@ -209,6 +257,7 @@ try {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.1"></script>
 <script src="./chartjs-chart-financial.js" type="text/javascript"></script>
+<script src="algorithm.js"></script>
 <script>
 $(function() {
 	//stock data
@@ -647,19 +696,57 @@ data: intc_data_candlesticks,
 options: {},
 };
 const intc_candlestick = new Chart(document.getElementById("intc_candlestick"), intc_config2);
-const aapl_close2 = <?php echo json_encode($aapl_close2); ?>;
+const  aapl_close2 = <?php echo json_encode($aapl_close2); ?>;
 const fb_close2 = <?php echo json_encode($fb_close2); ?>;
-const intc_close = <?php echo json_encode($intc_close); ?>;
-var aapl_ma = [];
-var fb_ma = [];
-var intc_ma = [];
-for (let i = 0; i < aapl_close2.length; i++) {
-	var sum = 0;
-	for (let j = aapl_close.length-1; j > aapl_close.length-50; j--) {
-		sum += parseFloat(aapl_close[j]);
+const intc_close2 = <?php echo json_encode($intc_close2); ?>;
+const aapl_MA = getMA(aapl_close,aapl_close2,20);
+const fb_MA = getMA(fb_close,fb_close2,20);
+const intc_MA = getMA(intc_close,intc_close2,20);
+function algorithm() {
+var cashflow = document.getElementById("cashflow").innerHTML;
+var p = document.getElementById("portfolio").innerHTML;
+var aapl_quantity =  parseInt(cashflow/aapl_close2[0]);
+var aapl_buyprice = aapl_close2[0];
+cashflow = cashflow - aapl_close2[0]*aapl_quantity;
+for (let i = 1; i < aapl_close2.length ; i++) {
+	if((aapl_close2[i] > aapl_buyprice) && aapl_quantity != 0){
+		cashflow = cashflow + aapl_close2[i]*aapl_quantity;
+		aapl_quantity = 0;
 	}
-	aapl_ma.push((sum+parseFloat(aapl_close2[i]))/50); 
-}
-document.getElementById('algorithm').value = reformatDate.toString();
+	if ((aapl_close2[i] <= aapl_buyprice) && aapl_quantity == 0){
+		aapl_quantity =  parseInt(cashflow/aapl_close2[i]);
+		aapl_buyprice = aapl_close2[i];
+		cashflow = cashflow - aapl_close2[i]*aapl_quantity;
+	}
+	}
+	p = aapl_close2[aapl_close2.length-1]*aapl_quantity;
+	return [cashflow,p];
+}; 
+document.getElementById('algorithm').value = algorithm; 
+$(document).on("click", "#execute", function () {
+	const cf = 1000*document.getElementById("percentofcashflow").value*0.01;
+	const stock1 = document.getElementById("stock1").value;
+	const condition1 = document.getElementById("condition1").value;
+	const operator1 = document.getElementById("operator1").value;
+	const  price1 = document.getElementById("price1").value;
+	console.log(cf);
+	console.log(stock1);
+	console.log(condition1);
+	console.log(operator1);
+	console.log(price1);
+	algorithm = document.getElementById('algorithm').value;
+    var newAlgorithm =  new Function('"use strict";return ('+algorithm+')')();
+	var t = document.getElementById("netWorth").innerHTML;
+	let result  = newAlgorithm();
+	const c = result[0];
+	const p = result[1];
+	t = c + p; 
+	setInterval(function() {
+	$('#cashflow').html(c);
+	$('#portfolio').html(p);
+	$('#netWorth').html(t);
+   });
+
+});
 </script> 
 <script src="buttonHandler.js"></script>
