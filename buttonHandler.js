@@ -1,23 +1,8 @@
-//hide the game instruction 
-$("p").hide();
-$("#hide").hide();
-//show the game instruction
-$("#instruction").click(function () {
-  $("p").show();
-  $("#instruction").hide();
-  $("#hide").show();
-});
-//hide the game instruction again
-$("#hide").click(function () {
-  $("#instruction").show();
-  $("p").hide();
-  $("#hide").hide();
-});
 //only show the line chart of AAPL
 $(".candlestickchart").hide();
 $("#fb").hide();
 $("#intc").hide();
-//show the candlestick chart and hide the line chart 
+//show the candlestick chart and hide the line chart
 $("#candlestick").click(function () {
   $(".linechart").hide();
   $(".candlestickchart").show();
@@ -47,7 +32,11 @@ $(document).on("click", "#viewchartINTC", function () {
 });
 //pop up the historical data of AAPL
 $(document).on("click", "#viewhistoricaldataAAPL", function () {
-  window.open("aaplPortfolio.php", "AAPL Historical Data", "width=500, height=500");
+  window.open(
+    "aaplPortfolio.php",
+    "AAPL Historical Data",
+    "width=500, height=500"
+  );
 });
 //pop up the historical data of FB
 $(document).on("click", "#viewhistoricaldataFB", function () {
@@ -55,5 +44,9 @@ $(document).on("click", "#viewhistoricaldataFB", function () {
 });
 //pop up the historical data of INTC
 $(document).on("click", "#viewhistoricaldataINTC", function () {
-  window.open("intcPortfolio.php", "INTC Historical Data", "width=500, height=500");
+  window.open(
+    "intcPortfolio.php",
+    "INTC Historical Data",
+    "width=500, height=500"
+  );
 });
