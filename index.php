@@ -87,11 +87,11 @@ try {
 		$result5 =  $pdo->query($sql5);
         $result6 =  $pdo->query($sql6);
         if($result4->rowCount() >0) {
-			//$aapl_date2 = array();
+			$date2 = array();
 			$aapl_open2 = array();			
 			$aapl_close2 = array();
           while($row = $result4->fetch()){
-			//$aapl_date2[] = $row["Date"];
+			$date2[] = $row["Date"];
 			$aapl_open2[] =$row["Open"];
             $aapl_close2[] = $row["Close"];
           } 
@@ -126,27 +126,42 @@ try {
     }
    unset($pdo); 
 ?>
+<header>
+    <h1>Try your best to use $1000 to earn $5000! <button id='instruction'>How to play?</button></h1>
+</header>
 <div class="wrapper">
     <div class="container" style="float: left; margin: 10px;">
+	  <div class="row">
+        <div class="span12" style="float:left;border: 1px solid black; background-color: white; width: 625px; heigth: 400px; margin-bottom:30px;" >
+	        <button id="line">Line Chart</button>
+            <button id="candlestick">Candlestick Chart</button>
+            <div id="chart">
+		       <div id="aapl">
+		        <canvas class="linechart" id="aapl_line" style="width: 100%; "></canvas>
+                <canvas class="candlestickchart" id="aapl_candlestick" style="width: 100%"></canvas>	 
+		       </div>
+		       <div id="fb">
+                <canvas class="linechart" id="fb_line" style="width: 100%; "></canvas>
+                <canvas class="candlestickchart" id="fb_candlestick" style="width: 100%"></canvas>
+	          </div>
+		      <div id="intc">
+	           <canvas class="linechart" id="intc_line" style="width: 100%; "></canvas>
+              <canvas class="candlestickchart" id="intc_candlestick" style="width: 100%"></canvas>
+	          </div>
+	        </div>
+         </div>
+		</div>
       <div class="row">
         <div class="span10">
-          <h1>Try your best to use $1000 to earn $5000! <button id='instruction'>How to play?</button><button id='hide'>Hide</button></h1>
-		  <p>This is a simulation game for learning algorithmic trading.</p>
-		  <p>Suppose today is 2020-01-02. You start out with $1000 and 3 Stocks to buy. </p>
-		  <p>The goal is to rise your portfolio value from $1000 to $5000 during 2020-01-02 to 2021-09-30.</p>
-		  <p>You can click the "Buy" button of each stock to buy it and click "Sell" button to sell it.</p>
-		  <p>You can also type your own trading algorithm in the placeholder and click the button below it to execute the algorithm.</p>
-		  <p>The price of the Stocks changes every second and gets updated on the page in real time.</p> 
-		  <p>You can see your portfolio value, your cash flow and your total net worth in real time too.</p>
           <table class="table" id="myPortfolio">
             <thead>
               <tr>
                 <td>Stock Name</td>
                 <td>Symbol</td>
                 <td>Price ($)</td>
-                <td>Shares You Own</td>
-                <td>Buy</td>
-                <td>Sell</td>
+                <td>No Of Shares</td>
+              <!--<td>Buy</td>
+                <td>Sell</td>-->
                 <td></td>
                 <td></td>
               </tr>
@@ -163,34 +178,34 @@ try {
           </h3>
           <h3>Your Cash Flow: <span id="cashflow">1000</span></h3>
           <h3>Your Portfolio Value: <span id="portfolio">0</span></h3>
+		  <h3>Date: <span id="today"></span></h3>
+		  <button id='checkrecord'>Check Transaction record</button>
         </div>
       </div>
     </div>
-  <div>
-    <div class="span12" style="float: left; margin-left: 20px;border: 1px solid black; width: 550px; height: 300px" >
-     <button id="line">Line Chart</button>
-     <button id="candlestick">Candlestick Chart</button>
-     <div id="chart">
-		<div id="aapl">
-		  <canvas class="linechart" id="aapl_line" style="width: 100%; "></canvas>
-          <canvas class="candlestickchart" id="aapl_candlestick" style="width: 100%"></canvas>	 
-		</div>
-		<div id="fb">
-          <canvas class="linechart" id="fb_line" style="width: 100%; "></canvas>
-          <canvas class="candlestickchart" id="fb_candlestick" style="width: 100%"></canvas>
-	    </div>
-		<div id="intc">
-	     <canvas class="linechart" id="intc_line" style="width: 100%; "></canvas>
-         <canvas class="candlestickchart" id="intc_candlestick" style="width: 100%"></canvas>
-	   </div>
-   </div>
-    <div>
-        <div>
-         <br>
-		 <textarea id="algorithm" rows="10" cols="72" placeholder="Decide down your own trading algorithm">
-        </textarea>
-		<br>
-		 <div style="float: left; margin-left: 0px;border: 1px solid black; background-color: white">  
+	<div class="span12" style="float:left;padding: 10px;">
+    <div id="algorithm" style="border: 1px solid black; background-color: white;width: 600px;">
+		<div >
+		<span>function algorithm() {</span><br>
+		&emsp;<span>var cashflow = [];</span><br>
+		&emsp;<span>cashflow[0] = parseFloat(document.getElementById("cashflow").innerHTML);</span><br>
+		&emsp;<span>var pv = [];</span><br>
+		&emsp;<span>pv[0] = parseFloat(document.getElementById("portfolio").innerHTML);</span><br>
+		&emsp;<span>var days = 0;</span><br>
+		&emsp;<span>var aapl_quantity = [];</span><br>
+		&emsp;<span>aapl_quantity[0] = parseInt(document.getElementById("sharesAAPL").innerHTML);</span><br>
+		&emsp;<span>var fb_quantity = [];</span><br>
+		&emsp;<span>fb_quantity[0] =  parseInt(document.getElementById("sharesFB").innerHTML);</span><br>
+		&emsp;<span>var intc_quantity = [];</span><br>
+		&emsp;<span>intc_quantity[0] = parseInt(document.getElementById("sharesINTC").innerHTML);</span><br>
+		&emsp;<span>var aapl_buyprice = </span><input type="text" style="width: 300px" id="usercode1" value="aapl_close[0]"></input>&nbsp;<span>;</span>&nbsp;&nbsp;<br>
+		&emsp;<textarea id="usercode2" rows="5" cols="72"></textarea><br>
+		&emsp;<span>for (</span><input type="text" style="width: 300px" id="usercode3" value="let i = 1; i < aapl_close.length; i++"></input>&nbsp;<span>) {</span>&nbsp;&nbsp;<br>
+		&emsp;<textarea id="usercode4" rows="12" cols="72"></textarea><br>&emsp;<span>days++;</span><br>
+		&emsp;<textarea id="usercode5" rows="5" cols="72"></textarea><br><span>}</span><br>
+		&emsp;<span>return [cashflow, pv, days, aapl_quantity</span><input type="text" style="width: 240px" id="usercode6"></input>&nbsp;<span>];</span>&nbsp;&nbsp;<br>
+		<span>}</span><br>	
+		 <!--  
         <form id="algorithm" style="float: left; margin: 10px;" >
 		<span>Spend</span>
 		&nbsp;
@@ -231,17 +246,14 @@ try {
 	   <span>$</span>
 	   <input type="text" style="width: 40px" id="price2"></input>  	    
        </form>
-</div>
-        <br>
-		<br>
-		<br>
-		<br>
+	   -->
+      </div>
+   </div>
+
 		<div style="display: flex; justify-content: center; align-items: center;">
-        <button id="execute" onclick="">Execute Your Trading Algorithm</button>
-	    </div> 
-      </div>    
-  </div>
-  </div>
+        <button id="execute">Execute Your Trading Algorithm</button>
+	    </div>    
+  </div>	
 </div>
   </body>
 </html>
@@ -258,14 +270,33 @@ try {
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.1"></script>
 <script src="./chartjs-chart-financial.js" type="text/javascript"></script>
 <script src="algorithm.js"></script>
+<script src="buttonHandler.js"></script>
 <script>
+//show the game instruction
+$("#instruction").click(function () {
+  var game_instruction =
+    "This is a simulation game for learning algorithmic trading.\n";
+  game_instruction += "You start out with $1000 and 3 Stocks to buy.\n";
+  game_instruction +=
+    "The goal is to rise your portfolio value from $1000 to $5000 during 2020-01-02 to 2021-09-30.\n";
+  game_instruction +=
+    "You can click the 'Buy' button of each stock to buy it and click 'Sell' button to sell it.\n";
+  game_instruction +=
+    "You can also type your own trading algorithm in the placeholder and click the button below it to it.\n";
+  game_instruction +=
+    "The price of the Stocks changes every second and gets updated on the page in real time.\n";
+  game_instruction +=
+    "You can see your portfolio value, your cash flow and your total net worth in real time too.\n";
+    alert(game_instruction);
+	$("#instruction").show();
+});
 $(function() {
 	//stock data
 	stocks = [
 	  {
 	      name : 'Apple'
 	    , symbol : 'AAPL'
-	    , price : aapl_open2[0]
+	    , price : aapl_open[0]
 	    , shares : '0'
 		, chart : ''
 	    , historicaldata : ''	
@@ -273,7 +304,7 @@ $(function() {
 	  {
 	      name : 'Facebook'
 	    , symbol : 'FB'
-	    , price : fb_open2[0]
+	    , price : fb_open[0]
 	    , shares : '0'
 		, chart : ''
 		, historicaldata : '<button>View Historical data</button>'
@@ -281,7 +312,7 @@ $(function() {
 	  {
 		  name: 'Intel'
 		, symbol : 'INTC'
-		, price : intc_open2[0]
+		, price : intc_open[0]
 		, shares : '0'
 		, chart : ''
 		, historicaldata : '<button>View Historical data</button>'
@@ -289,6 +320,15 @@ $(function() {
 	];
 	//cash flow
 	var cashflow = 1000;
+	var today = 0;
+	$('#today').html(date[today]);
+	var profoliovalue = [];
+	var c = [];
+	var no_of_days = 0;
+	var aapl_shares = [];
+	var fb_shares = [];
+	var intc_shares = [];
+	var records = "";
 	//portfolio value
 	var portfolioValue = function(){
 		var total = 0;
@@ -321,10 +361,17 @@ $(function() {
 		return total; 
 	}
 
-	var changePrice = function(price) {
+	var changePrice = function(price,symbol,today) {
 		//generate a random number between -1 to 1 as the change of the stock price
-		change = Math.random() * 2 - 1;
-		price += change; 
+		if (symbol == 'AAPL'){
+			price = aapl_open[today]; 
+		}
+		if (symbol == 'FB'){
+			price = fb_open[today]; 
+		}
+		if (symbol == 'INTC'){
+			price = intc_open[today]; 
+		}		 
 		return price;
 	}
 
@@ -365,12 +412,12 @@ $(function() {
 			}
 
 		}
-			if (prop === 'shares') {
-				html += "<td> <form> <a href='#' class='buy' id='" + symbol + "Buy" + "'>Buy</a><br>";
-				html += "<input type='number' class='"+ symbol + "quantity"+"' id='" + symbol + "BuyQuantity" + "' min ='0' style='width: 50px'><br><span>share(s)</span></form></td>"; 
-				html += "<td> <form> <a href='#' class='sell' id='" + symbol + "Sell" + "'>Sell</a><br>";
-				html += "<input type='number'class='quantity' id='" + symbol + "SellQuantity" + "' min ='0' style='width: 50px'><br><span>share(s)</span></form> </td>";
-			}
+			//if (prop === 'shares') {
+			//	html += "<td> <form> <a href='#' class='buy' id='" + symbol + "Buy" + "'>Buy</a><br>";
+			//	html += "<input type='number' class='"+ symbol + "quantity"+"' id='" + symbol + "BuyQuantity" + "' min ='0' style='width: 50px'><br><span>share(s)</span></form></td>"; 
+			//	html += "<td> <form> <a href='#' class='sell' id='" + symbol + "Sell" + "'>Sell</a><br>";
+			//	html += "<input type='number'class='quantity' id='" + symbol + "SellQuantity" + "' min ='0' style='width: 50px'><br><span>share(s)</span></form> </td>";
+			//}
 
  	   }
  	   html += "</tr>";
@@ -378,7 +425,7 @@ $(function() {
 	}
 
 	//every second do this
-	setInterval(function() {
+	function setTable() {
 			// run the price through changePrice()
 			// replace the new price into the stock data
 			// replace the new price of the stock into the table
@@ -392,46 +439,75 @@ $(function() {
 				}
 				if (prop === 'price') {
 					var priceOfThisStock = parseFloat(obj[prop]);
-					obj[prop] = changePrice(priceOfThisStock); 
-					var roundedPrice = (obj[prop]).toFixed(2);
-				//change the class of the new stock price when the price is not same as the previous price
-				//in order to change the font color the price 
+					var newPrice = changePrice(priceOfThisStock,symbol,today);
+				    //change the class of the new stock price when the price is not same as the previous price
+				    //in order to change the font color the price 
+					
 					var element = "class = ";
-					if(roundedPrice > priceOfThisStock){
+					if(newPrice > priceOfThisStock){
 						element +="'up'>"; 
-					}
-					if(roundedPrice < priceOfThisStock){
+					} else if (newPrice < priceOfThisStock) {
 						element +="'down'>"; 
+					} else{
+						element +="'unchange'>"; 
 					}
-					//console.log((roundedPrice - priceOfThisStock), element);
-					$('#'+prop+symbol).html("<span id='price'"+ element+ roundedPrice + "</span>");
+					$('#'+prop+symbol).html("<span id='price'"+element+ newPrice + "</span>");
 				}
+				if (prop === 'shares') {
+					if (symbol == 'AAPL' && aapl_shares.length != 0){
+						$('#' + 'shares' + symbol).html(aapl_shares[today]); 
+						//if ((today == 0 && aapl_shares[today] !=0)||(fb_shares[today] > fb_shares[today-1])){
+						//    records += toString(date[today]+"  Buy "+(aapl_shares[today] - aapl_shares[today-1])+" shares of "+symbol+"\n");
+					//	} else if (aapl_shares[today] < aapl_shares[today-1]) {
+					//		records += toString(date[today]+"  Sell "+(aapl_shares[today-1] - aapl_shares[today])+" shares of "+symbol+"\n");
+					//	}
+		            }
+					if (symbol == 'FB' && fb_shares.length != 0){
+						$('#' + 'shares' + symbol).html(fb_shares[today]); 
+						//if ((today == 0 && fb_shares[today] !=0)||(fb_shares[today] > fb_shares[today-1])){
+					//	    records += toString(date[today]+"  Buy "+(fb_shares[today] - fb_shares[today-1])+" shares of "+symbol+"\n");
+					//	} 
+					//	if ((fb_shares[today] < fb_shares[today-1]) || (today ==0 && fb_shares[today-1] !=0){
+					//		records += toString(date[today]+"  Sell "+(fb_shares[today-1] - fb_shares[today])+" shares of "+symbol+"\n");
+					//	}
+		            }
+					if (symbol == 'INTC' && intc_shares.length != 0){
+						$('#' + 'shares' + symbol).html(intc_shares[today]);
+					//	if ((intc_shares[today] > intc_shares[today-1]) || (today ==0 && intc_shares[today] !=0){
+					//	    records += toString(date[today]+"  Buy "+(intc_shares[today] - intc_shares[today-1])+" shares of "+symbol+"\n");
+					//	} 
+					//	if (intc_shares[today] < intc_shares[today-1]) {
+					//		records += toString(date[today]+"  Sell "+(intc_shares[today-1] - intc_shares[today])+" shares of "+symbol+"\n");
+					//	} 
+		            }	
+									
+				}
+
 			}
-		}    
-	}, 1000 /* every second */ );
+		}   
+	}
 
 	//every second do this
-	setInterval(function() {
+	function setPorfolio() {
 		/*
 			- run cash flow, portfolio value, total worth functions
 			  and then put them in the dom
 			- decide whether buy/sell buttons should appear 
 			  and then put them or remove them from the dom
 		*/
-		for (var key in stocks) {
+	/*	for (var key in stocks) {
 			var obj = stocks[key];
 			//initialize 
 			var symbol = '';
 			var price = 0;
 			var p = 0;
 			var t = 0;
-
 			for (var prop in obj) {
 				/*
 				- grab the symbol value 
 				- to use to make unique ids for tds
 				*/
-				if (prop === 'symbol') {
+/*				if (prop === 'symbol') {
 					symbol = obj[prop]; 
 				}
 
@@ -441,7 +517,7 @@ $(function() {
 				$('#cashflow').html(cashflow);
 				$('#portfolio').html(p);
 				$('#netWorth').html(t);
-
+				$('#today').html(date[today]);
 				//hide all buy buttons if cashflow is 0
 				if (cashflow === 0) {
 					$('a').each(function() {
@@ -462,12 +538,19 @@ $(function() {
 					var sharesOwned = parseFloat(obj[prop]);
 				}
 			}
-		}
+		}*/
+		var networth = c[today]+profoliovalue[today];
+		$('#cashflow').html(c[today]);
+		$('#portfolio').html(profoliovalue[today]);
+		$('#netWorth').html(networth);
+		$('#today').html(date[today]);
+		if(today < no_of_days){
+			today++;
+		} 
 	   
-	}, 1000 /* every 1000 mili seconds */ );
+	}
 	//happens live
-	$(document).on('click', "a", function(){
-
+	/*$(document).on('click', "a", function(){
 	    //grab the id of this link and typecast it to a string
 	    var id = String($(this).attr('id'));
 	    //if this is a buy button
@@ -480,7 +563,6 @@ $(function() {
 	    	//subtract share amount from cashflow			
 	    	//initialize
 	    	var thisObj = 0; //specific object in stocks
-
 	    	for (var key in stocks) {
 	    		var obj = stocks[key];
 	    		for (var prop in obj) {
@@ -557,10 +639,35 @@ $(function() {
 	    			}
 	    		}
 	    	}
-	    } 
-	    //act like a button not a link
+	    }
+		if (today < date.length-1){
+			today++;
+		} 
 	    return false;	   
-	});
+	});*/
+	
+	$(document).on("click", "#execute", function () {
+    var algorithm = "function algorithm() { var cashflow = [];";
+	algorithm += "cashflow[0] = parseFloat(document.getElementById('cashflow').innerHTML); var pv = [];";
+	algorithm += "pv[0] = parseFloat(document.getElementById('portfolio').innerHTML); var days = 0; ";
+	algorithm += "var aapl_quantity = []; aapl_quantity[0] = parseInt(document.getElementById('sharesAAPL').innerHTML);";
+	algorithm += "var fb_quantity = []; fb_quantity[0] = parseInt(document.getElementById('sharesFB').innerHTML);";
+	algorithm += "var intc_quantity = []; intc_quantity[0] = parseInt(document.getElementById('sharesINTC').innerHTML);";
+	algorithm += "var aapl_buyprice = "+document.getElementById('usercode1').value+";"+document.getElementById('usercode2').value;
+	algorithm += "for ("+document.getElementById('usercode3').value+" ) { "+document.getElementById('usercode4').value;
+	algorithm += "days++;"+document.getElementById('usercode5').value+"}"+"return [cashflow, pv, days, aapl_quantity";
+	algorithm += document.getElementById('usercode6').value+"];}";
+    var newAlgorithm =  new Function('"use strict";return ('+algorithm+')')();
+	let result  = newAlgorithm();
+	console.log(result);
+	c = result[0];
+	profoliovalue = result[1];
+	no_of_days += result[2];
+	aapl_shares = result[3];
+	fb_shares = result[4];
+	setInterval(setTable, 1000);
+	setInterval(setPorfolio, 1000);
+});
 });
 //reformat the date and convert it into a timestamp
 function reformatDate(date, open, high, low, close){
@@ -579,33 +686,34 @@ function reformatDate(date, open, high, low, close){
    return candlesticks;
 }
 //encode the data to arrays for javascript
-const aapl_date = <?php echo json_encode($aapl_date); ?>;
-const aapl_open = <?php echo json_encode($aapl_open); ?>;
-const aapl_high = <?php echo json_encode($aapl_high); ?>;
-const aapl_low = <?php echo json_encode($aapl_low); ?>;
-const aapl_close = <?php echo json_encode($aapl_close); ?>;
-const fb_date = <?php echo json_encode($fb_date); ?>;
-const fb_open = <?php echo json_encode($fb_open); ?>;
-const fb_high = <?php echo json_encode($fb_high); ?>;
-const fb_low = <?php echo json_encode($fb_low); ?>;
-const fb_close = <?php echo json_encode($fb_close); ?>;
-const intc_date = <?php echo json_encode($intc_date); ?>;
-const intc_open = <?php echo json_encode($intc_open); ?>;
-const intc_high = <?php echo json_encode($intc_high); ?>;
-const intc_low = <?php echo json_encode($intc_low); ?>;
-const intc_close = <?php echo json_encode($intc_close); ?>;
-const aapl_open2 = <?php echo json_encode($aapl_open2); ?>;
-const fb_open2 = <?php echo json_encode($fb_open2); ?>;
-const intc_open2 = <?php echo json_encode($intc_open2); ?>;
+const aapl_historical_date = <?php echo json_encode($aapl_date); ?>;
+const aapl_historical_open = <?php echo json_encode($aapl_open); ?>;
+const aapl_historical_high = <?php echo json_encode($aapl_high); ?>;
+const aapl_historical_low = <?php echo json_encode($aapl_low); ?>;
+const aapl_historical_close = <?php echo json_encode($aapl_close); ?>;
+const fb_historical_date = <?php echo json_encode($fb_date); ?>;
+const fb_historical_open = <?php echo json_encode($fb_open); ?>;
+const fb_historical_high = <?php echo json_encode($fb_high); ?>;
+const fb_historical_low = <?php echo json_encode($fb_low); ?>;
+const fb_historical_close = <?php echo json_encode($fb_close); ?>;
+const intc_historical_date = <?php echo json_encode($intc_date); ?>;
+const intc_historical_open = <?php echo json_encode($intc_open); ?>;
+const intc_historical_high = <?php echo json_encode($intc_high); ?>;
+const intc_historical_low = <?php echo json_encode($intc_low); ?>;
+const intc_historical_close = <?php echo json_encode($intc_close); ?>;
+const date = <?php echo json_encode($date2); ?>;
+const aapl_open = <?php echo json_encode($aapl_open2); ?>;
+const fb_open = <?php echo json_encode($fb_open2); ?>;
+const intc_open = <?php echo json_encode($intc_open2); ?>;
 //plot line chart of AAPL
 const aapl_data_line = {
-labels: aapl_date,
+labels: aapl_historical_date,
 datasets: [
 {
 label: "Stock Price of AAPL",
 backgroundColor: "rgb(255, 99, 132)",
 borderColor: "rgb(255, 99, 132)",
-data: aapl_close,
+data: aapl_historical_close,
 },
 ],
 };
@@ -616,7 +724,7 @@ options: {},
 };
 const aapl_linechart = new Chart(document.getElementById("aapl_line"), aapl_config);
 //plot candlestick chart of AAPL
-const aapl_candlesticks = reformatDate(aapl_date, aapl_open, aapl_high, aapl_low, aapl_close);
+const aapl_candlesticks = reformatDate(aapl_historical_date, aapl_historical_open, aapl_historical_high, aapl_historical_low, aapl_historical_close);
 const aapl_data_candlesticks = {
 datasets: [
 {label: "Daily Change of Stock Price of AAPL",
@@ -632,13 +740,13 @@ options: {},
 const aapl_candlestick = new Chart(document.getElementById("aapl_candlestick"), aapl_config2);
 //plot line chart of FB
 const fb_data_line = {
-labels: fb_date,
+labels: fb_historical_date,
 datasets: [
 {
 label: "Stock Price of FB",
 backgroundColor: "rgba(255, 159, 64)",
 borderColor: "rgba(255, 159, 64)",
-data: fb_close,
+data: fb_historical_close,
 },
 ],
 };
@@ -649,7 +757,7 @@ options: {},
 };
 const fb_linechart = new Chart(document.getElementById("fb_line"), fb_config);
 //plot candlestick chart of FB
-const  fb_candlesticks = reformatDate(fb_date, fb_open, fb_high, fb_low, fb_close);
+const  fb_candlesticks = reformatDate(fb_historical_date, fb_historical_open, fb_historical_high, fb_historical_low, fb_historical_close);
 const fb_data_candlesticks = {
 datasets: [
 {label: "Daily Change of Stock Price of FB",
@@ -665,13 +773,13 @@ options: {},
 const fb_candlestick = new Chart(document.getElementById("fb_candlestick"), fb_config2);
 //plot line chart of INTC
 const intc_data_line = {
-labels: intc_date,
+labels: intc_historical_date,
 datasets: [
 {
 label: "Stock Price of INTC",
 backgroundColor: "rgb(54, 162, 235)",
 borderColor: "rgb(54, 162, 235)",
-data: intc_close,
+data: intc_historical_close,
 },
 ],
 };
@@ -682,7 +790,7 @@ options: {},
 };
 const intc_linechart = new Chart(document.getElementById("intc_line"), intc_config);
 //plot candlestick chart of INTC
-const intc_candlesticks = reformatDate(intc_date, intc_open, intc_high, intc_low, intc_close);
+const intc_candlesticks = reformatDate(intc_historical_date, intc_historical_open, intc_historical_high, intc_historical_low, intc_historical_close);
 const intc_data_candlesticks = {
 datasets: [
 {label: "Daily Change of Stock Price of INTC",
@@ -696,57 +804,39 @@ data: intc_data_candlesticks,
 options: {},
 };
 const intc_candlestick = new Chart(document.getElementById("intc_candlestick"), intc_config2);
-const  aapl_close2 = <?php echo json_encode($aapl_close2); ?>;
-const fb_close2 = <?php echo json_encode($fb_close2); ?>;
-const intc_close2 = <?php echo json_encode($intc_close2); ?>;
-const aapl_MA = getMA(aapl_close,aapl_close2,20);
-const fb_MA = getMA(fb_close,fb_close2,20);
-const intc_MA = getMA(intc_close,intc_close2,20);
-function algorithm() {
-var cashflow = document.getElementById("cashflow").innerHTML;
-var p = document.getElementById("portfolio").innerHTML;
-var aapl_quantity =  parseInt(cashflow/aapl_close2[0]);
-var aapl_buyprice = aapl_close2[0];
-cashflow = cashflow - aapl_close2[0]*aapl_quantity;
-for (let i = 1; i < aapl_close2.length ; i++) {
-	if((aapl_close2[i] > aapl_buyprice) && aapl_quantity != 0){
-		cashflow = cashflow + aapl_close2[i]*aapl_quantity;
-		aapl_quantity = 0;
+const  aapl_close = <?php echo json_encode($aapl_close2); ?>;
+const fb_close = <?php echo json_encode($fb_close2); ?>;
+const intc_close = <?php echo json_encode($intc_close2); ?>;
+const aapl_MA = getMA(aapl_historical_close,aapl_close,20);
+const fb_MA = getMA(fb_historical_close,fb_close,20);
+const intc_MA = getMA(intc_historical_close,intc_close,20);
+/*function algorithm() {
+var cashflow = [];
+cashflow[0] = parseFloat(document.getElementById("cashflow").innerHTML);
+var pv[] = ;
+pv[0] = parseFloat(document.getElementById("portfolio").innerHTML);
+var days = 0;
+var aapl_quantity = [];
+aapl_quantity[0] = parseInt(document.getElementById("sharesAAPL").innerHTML);
+var aapl_buyprice = aapl_close[0];
+aapl_quantity[0] = aapl_quantity[0]+parseInt(cashflow[0]/aapl_close[0]);
+cashflow[0] = cashflow[0] - aapl_close[0]*aapl_quantity[0];
+for (let i = 1; i < aapl_close.length; i++) {
+	if((aapl_close[i] > aapl_buyprice) && aapl_quantity[i-1] != 0){
+		cashflow[i] = cashflow[i-1] + aapl_close[i]*aapl_quantity[i-1];
+		aapl_quantity[i] = 0;
+	} else if ((aapl_close[i] <= aapl_buyprice) && aapl_quantity[i-1] == 0){
+		aapl_quantity[i] =  parseInt(cashflow[i-1]/aapl_close[i]);
+		aapl_buyprice = aapl_close[i];
+		cashflow[i] = cashflow[i-1] - aapl_close[i]*aapl_quantity[i];
+	} else{
+		cashflow[i] = cashflow[i-1];
+		aapl_quantity[i] = aapl_quantity[i-1];
 	}
-	if ((aapl_close2[i] <= aapl_buyprice) && aapl_quantity == 0){
-		aapl_quantity =  parseInt(cashflow/aapl_close2[i]);
-		aapl_buyprice = aapl_close2[i];
-		cashflow = cashflow - aapl_close2[i]*aapl_quantity;
-	}
-	}
-	p = aapl_close2[aapl_close2.length-1]*aapl_quantity;
-	return [cashflow,p];
-}; 
-document.getElementById('algorithm').value = algorithm; 
-$(document).on("click", "#execute", function () {
-	const cf = 1000*document.getElementById("percentofcashflow").value*0.01;
-	const stock1 = document.getElementById("stock1").value;
-	const condition1 = document.getElementById("condition1").value;
-	const operator1 = document.getElementById("operator1").value;
-	const  price1 = document.getElementById("price1").value;
-	console.log(cf);
-	console.log(stock1);
-	console.log(condition1);
-	console.log(operator1);
-	console.log(price1);
-	algorithm = document.getElementById('algorithm').value;
-    var newAlgorithm =  new Function('"use strict";return ('+algorithm+')')();
-	var t = document.getElementById("netWorth").innerHTML;
-	let result  = newAlgorithm();
-	const c = result[0];
-	const p = result[1];
-	t = c + p; 
-	setInterval(function() {
-	$('#cashflow').html(c);
-	$('#portfolio').html(p);
-	$('#netWorth').html(t);
-   });
+	days++;
+	pv[i] = parseFloat(aapl_close[i]*aapl_quantity[i]);
+}
+	return [cashflow,pv,days,aapl_quantity];
+}; */
 
-});
 </script> 
-<script src="buttonHandler.js"></script>

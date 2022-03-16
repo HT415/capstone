@@ -9,7 +9,7 @@ table#myPortfolio {
 	}
 
 	#myPortfolio td {
-		padding: 12px;
+		padding: 10px;
 	}
 
 /* styling the share price */
@@ -18,6 +18,9 @@ table#myPortfolio {
 }
 .down {
 	color: #FF0000;
+}
+.unchage {
+	color: black;
 }
 /* buy and sell buttons */
 a{
@@ -56,10 +59,16 @@ a.sell{
 #title{
 	width: 600px;
 }
-p{
-	color: #FF0000;
-}
+
 body {
 	background-color: #F8F8FF;
 }
-
+#algorithm{
+	float: left; 
+	margin-left: 0px;
+	border: 1px solid black; 
+	background-color: white;
+}
+#algorithm span{
+	font: 10px;
+}
