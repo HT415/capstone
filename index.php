@@ -179,7 +179,8 @@ try {
           <h3>Your Cash Flow: <span id="cashflow">1000</span></h3>
           <h3>Your Portfolio Value: <span id="portfolio">0</span></h3>
 		  <h3>Date: <span id="today"></span></h3>
-		  <button id='checkrecord'>Check Transaction record</button>
+		  <button id="checkrecord">Check Transaction record</button>
+		  <div id="records"style="border: 1px solid black; background-color: white;"></div>
         </div>
       </div>
     </div>
@@ -274,19 +275,13 @@ try {
 <script>
 //show the game instruction
 $("#instruction").click(function () {
-  var game_instruction =
-    "This is a simulation game for learning algorithmic trading.\n";
+  var game_instruction = "This is a simulation game for learning algorithmic trading.\n";
   game_instruction += "You start out with $1000 and 3 Stocks to buy.\n";
-  game_instruction +=
-    "The goal is to rise your portfolio value from $1000 to $5000 during 2020-01-02 to 2021-09-30.\n";
-  game_instruction +=
-    "You can click the 'Buy' button of each stock to buy it and click 'Sell' button to sell it.\n";
-  game_instruction +=
-    "You can also type your own trading algorithm in the placeholder and click the button below it to it.\n";
-  game_instruction +=
-    "The price of the Stocks changes every second and gets updated on the page in real time.\n";
-  game_instruction +=
-    "You can see your portfolio value, your cash flow and your total net worth in real time too.\n";
+  game_instruction += "The goal is to rise your portfolio value from $1000 to $5000 during 2020-01-02 to 2021-09-30.\n";
+  game_instruction += "You can click the 'Buy' button of each stock to buy it and click 'Sell' button to sell it.\n";
+  game_instruction += "You can also type your own trading algorithm in the placeholder and click the button below it to it.\n";
+  game_instruction += "The price of the Stocks changes every second and gets updated on the page in real time.\n";
+  game_instruction += "You can see your portfolio value, your cash flow and your total net worth in real time too.\n";
     alert(game_instruction);
 	$("#instruction").show();
 });
@@ -322,13 +317,14 @@ $(function() {
 	var cashflow = 1000;
 	var today = 0;
 	$('#today').html(date[today]);
-	var profoliovalue = [];
+	var portfoliovalue = [];
 	var c = [];
 	var no_of_days = 0;
 	var aapl_shares = [];
 	var fb_shares = [];
 	var intc_shares = [];
-	var records = "";
+	var records = [];
+	var counter = 0;
 	//portfolio value
 	var portfolioValue = function(){
 		var total = 0;
@@ -454,33 +450,60 @@ $(function() {
 					$('#'+prop+symbol).html("<span id='price'"+element+ newPrice + "</span>");
 				}
 				if (prop === 'shares') {
-					if (symbol == 'AAPL' && aapl_shares.length != 0){
+					if (symbol == 'AAPL' && aapl_shares != []){
 						$('#' + 'shares' + symbol).html(aapl_shares[today]); 
-						//if ((today == 0 && aapl_shares[today] !=0)||(fb_shares[today] > fb_shares[today-1])){
-						//    records += toString(date[today]+"  Buy "+(aapl_shares[today] - aapl_shares[today-1])+" shares of "+symbol+"\n");
-					//	} else if (aapl_shares[today] < aapl_shares[today-1]) {
-					//		records += toString(date[today]+"  Sell "+(aapl_shares[today-1] - aapl_shares[today])+" shares of "+symbol+"\n");
-					//	}
+						if (today == 0 && aapl_shares[today] !=0){
+						    records[counter] = (date[today]+"  Buy "+aapl_shares[today]+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+						} else {
+							if (aapl_shares[today] > aapl_shares[today-1]){
+							records[counter] = (date[today]+"  Buy "+(aapl_shares[today] - aapl_shares[today-1])+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+						   } else if (aapl_shares[today] < aapl_shares[today-1]) {
+							records[counter] = (date[today]+"  Sell "+(aapl_shares[today-1] - aapl_shares[today])+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+					      }
+					  }	
 		            }
-					if (symbol == 'FB' && fb_shares.length != 0){
+					if (symbol == 'FB' && fb_shares != []){
 						$('#' + 'shares' + symbol).html(fb_shares[today]); 
-						//if ((today == 0 && fb_shares[today] !=0)||(fb_shares[today] > fb_shares[today-1])){
-					//	    records += toString(date[today]+"  Buy "+(fb_shares[today] - fb_shares[today-1])+" shares of "+symbol+"\n");
-					//	} 
-					//	if ((fb_shares[today] < fb_shares[today-1]) || (today ==0 && fb_shares[today-1] !=0){
-					//		records += toString(date[today]+"  Sell "+(fb_shares[today-1] - fb_shares[today])+" shares of "+symbol+"\n");
-					//	}
+						if (today == 0 && fb_shares[today] !=0){
+						    records[counter] = (date[today]+"  Buy "+fb_shares[today]+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+						} else {
+							if (fb_shares[today] > fb_shares[today-1]){
+							records[counter] = (date[today]+"  Buy "+(fb_shares[today] - fb_shares[today-1])+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+						   } else if (fb_shares[today] < fb_shares[today-1]) {
+							records[counter] = (date[today]+"  Sell "+(fb_shares[today-1] - fb_shares[today])+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+					      }
+					  }	
 		            }
-					if (symbol == 'INTC' && intc_shares.length != 0){
+					if (symbol == 'INTC' && intc_shares != []){
 						$('#' + 'shares' + symbol).html(intc_shares[today]);
-					//	if ((intc_shares[today] > intc_shares[today-1]) || (today ==0 && intc_shares[today] !=0){
-					//	    records += toString(date[today]+"  Buy "+(intc_shares[today] - intc_shares[today-1])+" shares of "+symbol+"\n");
-					//	} 
-					//	if (intc_shares[today] < intc_shares[today-1]) {
-					//		records += toString(date[today]+"  Sell "+(intc_shares[today-1] - intc_shares[today])+" shares of "+symbol+"\n");
-					//	} 
-		            }	
-									
+						if (today == 0 && intc_shares[today] !=0){
+						    records[counter] = (date[today]+"  Buy "+intc_shares[today]+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+						} else {
+							if (intc_shares[today] > intc_shares[today-1]){
+							records[counter] = (date[today]+"  Buy "+(intc_shares[today] - intc_shares[today-1])+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+						   } else if (intc_shares[today] < intc_shares[today-1]) {
+							records[counter] = (date[today]+"  Sell "+(intc_shares[today-1] - intc_shares[today])+" shares of "+symbol+"\n").toString();
+							document.getElementById("records").innerHTML += records[counter]+"<br>";
+							counter++;
+					      }
+					  }	
+		            }					
 				}
 
 			}
@@ -539,15 +562,24 @@ $(function() {
 				}
 			}
 		}*/
-		var networth = c[today]+profoliovalue[today];
+		var networth = c[today]+portfoliovalue[today];
 		$('#cashflow').html(c[today]);
-		$('#portfolio').html(profoliovalue[today]);
+		$('#portfolio').html(portfoliovalue[today]);
 		$('#netWorth').html(networth);
 		$('#today').html(date[today]);
-		if(today < no_of_days){
+		if (networth >= 5000){
+		alert("You reach the goal!");
+	    } else if (today == (date.length-1)){
+			if(networth >= 1000){
+				alert("You earn $"+(networth-1000));
+			} else{
+				alert("You lost $"+(1000-networth));
+			}
+		} else{
+			if(today < no_of_days){
 			today++;
-		} 
-	   
+		}
+		}
 	}
 	//happens live
 	/*$(document).on('click', "a", function(){
@@ -645,7 +677,7 @@ $(function() {
 		} 
 	    return false;	   
 	});*/
-	
+
 	$(document).on("click", "#execute", function () {
     var algorithm = "function algorithm() { var cashflow = [];";
 	algorithm += "cashflow[0] = parseFloat(document.getElementById('cashflow').innerHTML); var pv = [];";
@@ -661,10 +693,11 @@ $(function() {
 	let result  = newAlgorithm();
 	console.log(result);
 	c = result[0];
-	profoliovalue = result[1];
+	portfoliovalue = result[1];
 	no_of_days += result[2];
 	aapl_shares = result[3];
 	fb_shares = result[4];
+	intc_shares = result[5];
 	setInterval(setTable, 1000);
 	setInterval(setPorfolio, 1000);
 });
